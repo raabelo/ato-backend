@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String @id @unique
+  nickname   String @unique
+  title      String
+  character  Int
+  decks      Deck[]
+  activeDeck String
+  packs      String
+  collection String
+  rank       Int?   @default(0)
+  dust       Int?   @default(0)
+  gold       Int?   @default(0)
+  games      Game[] @relation("UserToGame")
+
+  email    String @unique
+  password String
+
+  role String? @default("USER")
+}
+
+model Game {
+  session String @id @unique
+  players User[] @relation("UserToGame")
+  state   String
+}
+
+model Deck {
+  id String @id @unique
+
+  name  String
+  cards String
+
+  owner   User   @relation(fields: [ownerId], references: [id])
+  ownerId String
+}
+
+model Card {
+  id       String  @id @unique
+  name     String
+  title    String
+  pantheon String
+  age      String
+  cost     Int
+  atk      Int?    @default(0)
+  def      Int?    @default(0)
+  rarity   Int
+  variant  String
+  text     String? @default("")
+  art      String? @default("")
+  flavor   String? @default("")
+  type     String
+}
